@@ -28,7 +28,7 @@ def prepare_pages_urls(url):
     page_url_template = prefix + postfix;
 
     # limit total_page to 1 for testing purpose
-    total_page = 1;
+    total_page = 50;
 
     # for every page number make a new url 
     for i in range(1, int(total_page)+1):
@@ -76,58 +76,80 @@ def parse_item_page(item_url):
     data = requests.get(item_url).text;
     soup = BeautifulSoup(data, 'html.parser');
 
-    item_section = soup.find('div', id='big-image');
-    creation_info = soup.find('div', id='creation-info');
-
-    title = item_section.find('div', class_='big-header').text.strip();
-    print("Title: %s" % title);
-
-    published_date = item_section.find('div', class_='big-published-details').text.strip().split(' ', 1)[1];
-    print("Published Date: %s" % published_date);
-    date_object = datetime.strptime(published_date, '%b %d, %Y');
-
-    preview_image = item_section.find('a', class_='magnific-gallery-image').get('href');
-    print("Image URL: %s" % preview_image);
-
-
-    artist = item_section.find('p', class_='artist-name').text.strip();
-    print("Artist Name: %s" % artist);
-
-    downloads = int(item_section.find_all('span', class_='stats-size')[0].text.replace(',', ''));
-    comments = int(item_section.find_all('span', class_='stats-size')[1].text.replace(',', ''));
-    print("Downloads: %s" % downloads);
-    print("Comments: %s" % comments);
-
-    # print(comments);
-
-    # top_field_length = len(creation_info.find('div', id='info-description').find_all('p'));
-
-    description = creation_info.find('div', id='info-description').text;
-    # print(description);
-
+    title = "";
+    publish_date = "";
+    preview_image = "";
+    date_object = None;
+    artist = "";
+    downloads = 0;
+    comments = 0;
+    description = "";
     short_url = "";
     item_id = "";
     revision = "";
     mod_type = "";
 
-    for info in creation_info.find('div', id='info-description').find_all('p'):
-      # parse separate field info out
-      content = info.text;
-      if 'Short URL' in content:
-          short_url = content.split(':', 1)[1].strip();
-      if 'ItemID' in content:
-          item_id = content.split(':')[1].strip();
-      if 'Revision' in content:
-          revision = int(content.split(':')[1]);
+
+    item_section = soup.find('div', id='big-image');
+    creation_info = soup.find('div', id='creation-info');
+
+    try:
+      title = item_section.find('div', class_='big-header').text.strip();
+      print("Title: %s" % title);
+
+      published_date = item_section.find('div', class_='big-published-details').text.strip().split(' ', 1)[1];
+      print("Published Date: %s" % published_date);
+      date_object = datetime.strptime(published_date, '%b %d, %Y');
+
+      preview_image = item_section.find('a', class_='magnific-gallery-image').get('href');
+      print("Image URL: %s" % preview_image);
+
+
+      artist = item_section.find('p', class_='artist-name').text.strip();
+      print("Artist Name: %s" % artist);
+
+      downloads = int(item_section.find_all('span', class_='stats-size')[0].text.replace(',', ''));
+      comments = int(item_section.find_all('span', class_='stats-size')[1].text.replace(',', ''));
+      print("Downloads: %s" % downloads);
+      print("Comments: %s" % comments);
+    except:
+      print('Basic info not FOUND');
+      return;
+      pass;
+
+    try:
+      description = creation_info.find('div', id='info-description').text;
+    except:
+      print('description not FOUND');
+      pass;
+
+
+    try:
+      for info in creation_info.find('div', id='info-description').find_all('p'):
+        # parse separate field info out
+        content = info.text;
+        if 'Short URL' in content:
+            short_url = content.split(':', 1)[1].strip();
+        if 'ItemID' in content:
+            item_id = content.split(':')[1].strip();
+        if 'Revision' in content:
+            revision = int(content.split(':')[1]);
+    except:
+      print('creation info not FOUND!');
+      pass;
 
     print("Short_url: %s" % short_url);
     print("Item_id: %s" % item_id);
     print("Revision: %s" % revision);
 
-    for c_info in creation_info.find('ul', class_='info-attributes group').find_all('li'):
-      content = c_info.text;
-      if 'Type' in content:
-        mod_type = content.split(':')[1].strip();
+    try:
+      for c_info in creation_info.find('ul', class_='info-attributes group').find_all('li'):
+        content = c_info.text;
+        if 'Type' in content:
+          mod_type = content.split(':')[1].strip();
+    except:
+      print('mod type info not FOUND!');
+      pass;
 
 
     print("Mod type: %s" % mod_type);
@@ -158,7 +180,11 @@ if __name__ == "__main__":
     page_urls = prepare_pages_urls(url);
 
     # parse every page and item, and persist the data into db
+    i = 0;
     for url in page_urls:
+      i += 1;
+
+      print('Processing page %d out of %d' % (i, len(page_urls)));
       item_urls = parse_items_in_page(url);
       for item in item_urls:
         parse_item_page(item);
