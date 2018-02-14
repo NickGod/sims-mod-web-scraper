@@ -108,18 +108,6 @@ def parse_item_page(item_url):
 
     type_section = soup.find('td', class_='smallfont');
 
-
-    # categories_path_info = item_nav_bar.find_all('li',class_="hidden-phone");
-
-
-    # collect path info
-    # for path in categories_path_info:
-    #     if path.find('a'):
-    #         categories += path.a.text + "/";
-    #     else:
-    #         categories += path.text + "/";
-
-
     try:
         category = item_nav_bar.find('h3').text.strip();
         print("Category: %s" % category);
@@ -162,7 +150,6 @@ def parse_item_page(item_url):
           stripped_stats = stat.text.strip();
           if "Thanks" in stripped_stats:
             thanks = int(stripped_stats.split("\n")[0].replace(",", ""));
-            print ()
           elif "Favourited" in stripped_stats:
             favourited = int(stripped_stats.split("\n")[0].replace(",", ""));
           elif "Downloads" in stripped_stats:
@@ -212,6 +199,7 @@ def parse_item_page(item_url):
       'title': title,
       'artist': artist,
       'artist_url': artist_link,
+      'category': category,
       'publish_date': date_object,
       'views': views,
       'thanks': thanks,
@@ -239,8 +227,8 @@ if __name__ == "__main__":
     page_urls = prepare_pages_urls(url);
 
     # parse every page and item, and persist the data into db
-    for i in range(0, 10):
-        item_urls = parse_items_in_page(page_urls[0]);
+    for i in range(0, len(page_urls)):
+        item_urls = parse_items_in_page(page_urls[i]);
         for item in item_urls:
           parse_item_page(item);
 
