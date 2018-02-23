@@ -5,6 +5,7 @@ import re
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import sys, traceback
+import logging
 
 BASE_URL = "http://modthesims.info";
 BASE_URL_BEFORE = "/browse.php?f=414&";
@@ -28,12 +29,11 @@ def prepare_pages_urls(url):
       pages_details = pages.find('div', class_="pull-right");
       total_page = pages.find_all('div', class_="pull-right")[2].strong.text.split("of")[1].strip();
     except:
-      print('total page not found');
       pass;
 
     for i in range(1, int(total_page) + 1):
         url = prefix + BASE_URL_BEFORE + "page=" + str(i) + BASE_URL_END;
-        # print url;
+        # logging.debug url;
         page_urls.append(url);
 
     return page_urls;
@@ -56,38 +56,42 @@ def parse_items_in_page(page_url):
 def insertAndUpdate(item):
     item_record = collection.find_one({"title": item['title']});
 
-    if item_record is not None:
-      # calculate differences from last snapshot data
-      views_dif = item['views'] - item_record['views'];
-      downloads_dif = item['downloads'] - item_record['downloads'];
-      fav_dif = item['favourited'] - item_record['favourited'];
-      thanks_dif = item['thanks'] - item_record['thanks'];
+    try:
+      if item_record is not None:
+        # calculate differences from last snapshot data
+        views_dif = item['views'] - item_record['views'];
+        downloads_dif = item['downloads'] - item_record['downloads'];
+        fav_dif = item['favourited'] - item_record['favourited'];
+        thanks_dif = item['thanks'] - item_record['thanks'];
 
-      dif_data = {
-        'date': str(datetime.now().date()),
-        'views': views_dif,
-        'downloads': downloads_dif,
-        'favourited': fav_dif,
-        'thanks': thanks_dif
-      };
+        dif_data = {
+          'date': str(datetime.now().date()),
+          'views': views_dif,
+          'downloads': downloads_dif,
+          'favourited': fav_dif,
+          'thanks': thanks_dif
+        };
 
-      # perform update with new daily data;
-      collection.update_one(
-        {"title": item['title']}, 
-        { 
-          "$addToSet": { "time_series_data" : dif_data },
-          "$set" : {
-            "views": item['views'],
-            "downloads": item['downloads'],
-            "thanks": item['thanks'],
-            "favourited": item['favourited']
-          }
-        }, 
-        upsert=True);
+        # perform update with new daily data;
+        collection.update_one(
+          {"title": item['title']}, 
+          { 
+            "$addToSet": { "time_series_data" : dif_data },
+            "$set" : {
+              "views": item['views'],
+              "downloads": item['downloads'],
+              "thanks": item['thanks'],
+              "favourited": item['favourited']
+            }
+          }, 
+          upsert=True);
 
-    else:
-      # simply insert the record
-      collection.insert(item);
+      else:
+        # simply insert the record
+        collection.insert(item);
+    except:
+      logging.debug('Error when inserting into db');
+      pass;
 
 # this should get item detail and store the data into db
 # item = {
@@ -110,9 +114,8 @@ def insertAndUpdate(item):
 # }
 
 def parse_item_page(item_url):
-    print("\n========================\n");
-    print("Processing: %s" % item_url);
-    print("\n========================\n");
+    logging.debug("================================================");
+    logging.debug("Processing: %s" % item_url);
 
     item = {};
     data = requests.get(item_url).text;
@@ -148,20 +151,16 @@ def parse_item_page(item_url):
 
     item_header = soup.find('div', class_='well profilepic well-small well-inline clearfix');
     creation_info = soup.find_all('div', class_="row-fluid")[1];
-
     item_nav_bar = soup.find('div', class_='navbitsbreadcrumbs font-large');
-    #stats_section = soup.find('div', id="carouselrow");
-
     stats_section = soup.find('div', class_='infobox well nopadding noborder');
-
     files_section = soup.find('div', id='actualtab1').find('table');
 
     try:
         category = item_nav_bar.find('h3').text.strip();
-        print("Category: %s" % category);
+        # logging.debug("Category: %s" % category);
 
         title = item_header.find('h2').text.strip();
-        print("Title: %s" % title);
+        # logging.debug("Title: %s" % title);
 
         # second pull left section for artist profile
         # this is not necessarily true
@@ -172,25 +171,25 @@ def parse_item_page(item_url):
             published_date = section.text.split("Posted")[1].split("-")[0].strip().replace('\xa0', ' ');
             break;
 
-        print ("Artist Name: %s" % artist);
-        print ("Artist Link: %s" % artist_link);
-
+        # logging.debug ("Artist Name: %s" % artist);
+        # logging.debug ("Artist Link: %s" % artist_link);
+        logging.debug(published_date);
         # format 30th Sep 2014 at 5:08 PM
-        if "Today" and "Yesterday" not in published_date:
+        if "Today" not in published_date and "Yesterday" not in published_date:
           date_object = parse(published_date);
         elif "Today" in published_date:
           date_object = datetime.today();
         elif "Yesterday" in published_date:
           date_object = datetime.today() - timedelta(days=1);
 
-        print("Published Date: %s" % str(date_object));
+        # logging.debug("Published Date: %s" % str(date_object));
 
         # preview_image = item_section.find('a', class_='magnific-gallery-image').get('href');
-        # print("Image URL: %s" % preview_image);
+        # logging.debug("Image URL: %s" % preview_image);
 
     except:
-      traceback.print_exc(file=sys.stdout);
-      print('Basic info not FOUND');
+      # traceback.print.debug_exc(file=sys.stdout);
+      logging.exception('Basic info not FOUND');
       return;
 
     try:
@@ -200,15 +199,15 @@ def parse_item_page(item_url):
         if len(images) > 0:
           preview_image = images[0].get('src');
 
-        print('Image url is: %s' % preview_image);
+        # logging.debug('Image url is: %s' % preview_image);
     except:
-      print('Image url not FOUND');
+      logging.exception('Image url not FOUND');
       pass;
 
     try:
         stats = stats_section.find('div', class_="well well-small").find_all('p');
         thanks = int(soup.find('span', id="numthanksf").text);
-        # print (stats.text);
+        # logging.debug (stats.text);
 
         for stat in stats:
           # find corresponding sections
@@ -217,7 +216,7 @@ def parse_item_page(item_url):
           stripped_stats = stat.text.strip();
           if "Expansion" in stripped_stats:
             for img in stat.find_all('img'):
-              print(img.get('alt'));
+              # logging.debug(img.get('alt'));
               pack_requirement.append(img.get('alt'));
           elif "Favourited" in stripped_stats:
             favourited = int(stripped_stats.split("Favourited")[0].replace(",", ""));
@@ -230,28 +229,27 @@ def parse_item_page(item_url):
           elif "Game Version" in stripped_stats:
             game_version = stripped_stats.split(":")[1].strip();
           elif "Type" in stripped_stats:
-            print("Type info: ");
+            # logging.debug("Type info: ");
             for mod_type in stat.find_all('em'):
-              print (mod_type.text);
+              # logging.debug (mod_type.text);
               types.append(mod_type.text);
           elif "Tags" in stripped_stats:
-            print("Tags info: ");
+            # logging.debug("Tags info: ");
             for tag in stat.find_all('a'):
-              print (tag.text);
+              # logging.debug (tag.text);
               tags.append(tag.text);
 
-        # print("Pack requirement: %s" % pack_requirement);
-        print("Thanks: %d, Favourited: %d, Downloads: %d, Views: %d, Game Version: %s" % (thanks, favourited, downloads, views, game_version));
+        # logging.debug("Pack requirement: %s" % pack_requirement);
+        # logging.debug("Thanks: %d, Favourited: %d, Downloads: %d, Views: %d, Game Version: %s" % (thanks, favourited, downloads, views, game_version));
     except:
-      traceback.print_exc(file=sys.stdout);
-      print('stats info not INCOMPLETE');
+      # traceback.logging.debug_exc(file=sys.stdout);
+      logging.exception('stats info INCOMPLETE');
       pass;
 
     try:
       description = soup.find('div', class_= "downloadDescription").text.strip();
-      # print("Item description: %s" % (description));
     except:
-      print('description not FOUND');
+      logging.exception('description not FOUND');
       pass;
 
     # parse files info, optional
@@ -270,39 +268,22 @@ def parse_item_page(item_url):
           elif i == 2:
             temp_file['downloads'] = int(file_infos[i].text.strip().replace(",", ""));
           elif i == 3:
-            temp_file['date'] = parse(file_infos[i].text.strip().replace('\xa0', ' '));
+            published_date = file_infos[i].text.strip().replace('\xa0', ' ');
+            date_object = None;
+            if "Today" not in published_date and "Yesterday" not in published_date:
+              date_object = parse(published_date);
+            elif "Today" in published_date:
+              date_object = datetime.today();
+            elif "Yesterday" in published_date:
+              date_object = datetime.today() - timedelta(days=1);
+            temp_file['date'] = date_object;
 
         files.append(temp_file);
-        print(temp_file);
+        # logging.debug(temp_file);
 
-      # print("Item description: %s" % (description));
     except:
-      print('File info not FOUND');
+      logging.exception('File info not FOUND');
       pass;
-
-
-
-    # # collect tags
-
-    # try:
-    #   for tag in tags_section.find_all('a'):
-    #     print (tag.text);
-    #     tags.append(tag.text);
-    # except:
-    #   print('tags info not FOUND');
-    #   pass;
-
-
-    # # collect types
-    # try:
-    #   if type_section is not None:
-    #     for mod_type in type_section.find_all('em'):
-    #       print (mod_type.text);
-    #       types.append(mod_type.text);
-    # except:
-    #   print('type info not FOUND');
-    #   pass;
-
 
     item = {
       'title': title,
@@ -330,12 +311,16 @@ def parse_item_page(item_url):
     # insert into db
     insertAndUpdate(item);
 
-  
+    logging.debug("================================================");
 
-if __name__ == "__main__":
+def start_scraping():
 
-    # base_url = "https://www.thesimsresource.com"
-    # url = "https://www.thesimsresource.com/downloads/browse/category/sims4-clothing";
+    # logging utility
+    # every time the scraper is run, it will write a new log file
+    log_time = str(datetime.now());
+    logging.basicConfig(filename=log_time+'.log', level=logging.DEBUG);
+
+
     base_url = "http://modthesims.info/";
     url = "http://modthesims.info/browse.php?f=414&showType=1&gs=4";
     page_urls = [];
@@ -356,16 +341,8 @@ if __name__ == "__main__":
         for item in item_urls:
           parse_item_page(item);
 
-
-    # for url in page_urls:
-    #   i += 1;
-
-
-      # print('Processing page %d out of %d' % (i, len(page_urls)));
-      # item_urls = parse_items_in_page(url);
-      # for item in item_urls:
-      #   parse_item_page(item);
-
+if __name__ == "__main__":
+    start_scraping();
 
 
 
