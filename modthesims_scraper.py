@@ -6,20 +6,24 @@ from datetime import datetime, timedelta
 from dateutil.parser import parse
 import sys, traceback
 import logging
+import os.path
 
-BASE_URL = "http://modthesims.info";
+BASE_URL = "http://modthesims.info/";
 BASE_URL_BEFORE = "/browse.php?f=414&";
 BASE_URL_END = "&showType=1&gs=4";
 # connect to db
 client = MongoClient('localhost', 27017);
 db = client.sims_test_db;
 collection = db.sims_new;
+item_count = 0;
+
 
 # prepare pages urls by parsing total pages and putting urls into a list
 def prepare_pages_urls(url):
     page_urls = [];
     data = requests.get(url).text;
     prefix = BASE_URL;
+    category = os.path.split(url)[1].split('&')[0];
     soup = BeautifulSoup(data, 'html.parser');
 
     total_page = 1;
@@ -32,9 +36,9 @@ def prepare_pages_urls(url):
       pass;
 
     for i in range(1, int(total_page) + 1):
-        url = prefix + BASE_URL_BEFORE + "page=" + str(i) + BASE_URL_END;
-        # logging.debug url;
-        page_urls.append(url);
+        final_url = prefix + category + "&page=" + str(i) + BASE_URL_END;
+        logging.debug(final_url);
+        page_urls.append(final_url);
 
     return page_urls;
 
@@ -310,6 +314,8 @@ def parse_item_page(item_url):
 
     # insert into db
     insertAndUpdate(item);
+    global item_count;
+    item_count = item_count + 1;
 
     logging.debug("================================================");
 
@@ -336,10 +342,20 @@ def start_scraping():
       page_urls += prepare_pages_urls(url);
 
     # parse every page and item, and persist the data into db
+    item_total = 0;
+    global item_count;
     for i in range(0, len(page_urls)):
         item_urls = parse_items_in_page(page_urls[i]);
+        item_total += len(item_urls);
+        print("************ %d out of %d items parsed ************" % (item_count, item_total));
         for item in item_urls:
           parse_item_page(item);
+
+    logging.debug("************ SUMMARY ************");
+
+    logging.debug("************ %d out of %d items saved into db ************" % (item_count, item_total));
+
+
 
 if __name__ == "__main__":
     start_scraping();
