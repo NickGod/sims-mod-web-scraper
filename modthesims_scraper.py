@@ -14,7 +14,7 @@ BASE_URL_END = "&showType=1&gs=4";
 # connect to db
 client = MongoClient('localhost', 27017);
 db = client.sims_test_db;
-collection = db.sims_new1;
+collection = db.sims_new;
 item_count = 0;
 
 
@@ -321,11 +321,12 @@ def parse_item_page(item_url):
     logging.debug("================================================");
 
 def start_scraping():
+    log_time = str(datetime.now());
 
     # logging utility
     # every time the scraper is run, it will write a new log file
-    log_time = str(datetime.now());
     logging.basicConfig(filename=log_time+'.log', level=logging.DEBUG);
+    logging.debug("************ Scraping starts at %s ************" % str(datetime.now()));
 
 
     base_url = "http://modthesims.info/";
@@ -352,7 +353,7 @@ def start_scraping():
         print("************ %d out of %d items parsed ************" % (item_count, item_total));
         for item in item_urls:
           parse_item_page(item);
-        # break;
+        break;
 
     logging.debug("************ SUMMARY ************");
 
