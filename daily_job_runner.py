@@ -9,8 +9,8 @@ def job():
 if __name__ == "__main__":
   print('Starting...');
   # schedule.every(1).minutes.do(job)
-  schedule.every().day.at("08:00").do(job);
+  schedule.every().minute.do(job);
 
   while(True):
     schedule.run_pending();
-    time.sleep(600);
+    time.sleep(10);

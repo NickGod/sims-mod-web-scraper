@@ -14,7 +14,7 @@ BASE_URL_END = "&showType=1&gs=4";
 # connect to db
 client = MongoClient('localhost', 27017);
 db = client.sims_test_db;
-collection = db.sims_new;
+collection = db.sims_new1;
 item_count = 0;
 
 
@@ -77,8 +77,9 @@ def insertAndUpdate(item):
         };
 
         # perform update with new daily data;
+        # do not update if a record already exists
         collection.update_one(
-          {"title": item['title']}, 
+          {"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}}, 
           { 
             "$addToSet": { "time_series_data" : dif_data },
             "$set" : {
@@ -94,7 +95,7 @@ def insertAndUpdate(item):
         # simply insert the record
         collection.insert(item);
     except:
-      logging.debug('Error when inserting into db');
+      logging.exception('Error when inserting into db');
       pass;
 
 # this should get item detail and store the data into db
@@ -210,7 +211,7 @@ def parse_item_page(item_url):
 
     try:
         stats = stats_section.find('div', class_="well well-small").find_all('p');
-        thanks = int(soup.find('span', id="numthanksf").text);
+        thanks = int(soup.find('span', id="numthanksf").text.replace(",", "").strip());
         # logging.debug (stats.text);
 
         for stat in stats:
@@ -344,12 +345,14 @@ def start_scraping():
     # parse every page and item, and persist the data into db
     item_total = 0;
     global item_count;
+    item_count = 0;
     for i in range(0, len(page_urls)):
         item_urls = parse_items_in_page(page_urls[i]);
         item_total += len(item_urls);
         print("************ %d out of %d items parsed ************" % (item_count, item_total));
         for item in item_urls:
           parse_item_page(item);
+        # break;
 
     logging.debug("************ SUMMARY ************");
 
@@ -359,6 +362,7 @@ def start_scraping():
 
 if __name__ == "__main__":
     start_scraping();
+    # reset item count
 
 
 
