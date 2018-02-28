@@ -1,0 +1,101 @@
+schema:
+- db: sims_test_db
+  tables:
+  - table: sims_item_col
+    collection: sims_item_col
+    pipeline: []
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: artist
+      MongoType: string
+      SqlName: artist
+      SqlType: varchar
+    - Name: artist_url
+      MongoType: string
+      SqlName: artist_url
+      SqlType: varchar
+    - Name: category
+      MongoType: string
+      SqlName: category
+      SqlType: varchar
+    - Name: description
+      MongoType: string
+      SqlName: description
+      SqlType: varchar
+    - Name: downloads
+      MongoType: int
+      SqlName: downloads
+      SqlType: int
+    - Name: favourited
+      MongoType: int
+      SqlName: favourited
+      SqlType: int
+    - Name: publish_date
+      MongoType: date
+      SqlName: publish_date
+      SqlType: timestamp
+    - Name: thanks
+      MongoType: int
+      SqlName: thanks
+      SqlType: int
+    - Name: title
+      MongoType: string
+      SqlName: title
+      SqlType: varchar
+    - Name: url
+      MongoType: string
+      SqlName: url
+      SqlType: varchar
+    - Name: views
+      MongoType: int
+      SqlName: views
+      SqlType: int
+  - table: sims_item_col_comments
+    collection: sims_item_col
+    pipeline: []
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+  - table: sims_item_col_tags
+    collection: sims_item_col
+    pipeline:
+    - $unwind:
+        includeArrayIndex: tags_idx
+        path: $tags
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: tags
+      MongoType: string
+      SqlName: tags
+      SqlType: varchar
+    - Name: tags_idx
+      MongoType: int
+      SqlName: tags_idx
+      SqlType: int
+  - table: sims_item_col_types
+    collection: sims_item_col
+    pipeline:
+    - $unwind:
+        includeArrayIndex: types_idx
+        path: $types
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: types
+      MongoType: string
+      SqlName: types
+      SqlType: varchar
+    - Name: types_idx
+      MongoType: int
+      SqlName: types_idx
+      SqlType: int

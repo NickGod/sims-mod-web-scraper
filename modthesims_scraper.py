@@ -12,7 +12,12 @@ BASE_URL = "http://modthesims.info/";
 BASE_URL_BEFORE = "/browse.php?f=414&";
 BASE_URL_END = "&showType=1&gs=4";
 # connect to db
-client = MongoClient('localhost', 27017);
+client = MongoClient('localhost', 
+                      username='sims_dev',
+                      password='dreaperdatavisualization',
+                      authSource='sims_test_db',
+                      authMechanism='SCRAM-SHA-1');
+
 db = client.sims_test_db;
 collection = db.sims_new;
 item_count = 0;
