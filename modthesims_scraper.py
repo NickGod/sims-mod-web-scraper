@@ -358,7 +358,6 @@ def start_scraping():
         print("************ %d out of %d items parsed ************" % (item_count, item_total));
         for item in item_urls:
           parse_item_page(item);
-        break;
 
     logging.debug("************ SUMMARY ************");
 
