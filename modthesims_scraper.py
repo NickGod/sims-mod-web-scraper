@@ -13,6 +13,7 @@ BASE_URL_BEFORE = "/browse.php?f=414&";
 BASE_URL_END = "&showType=1&gs=4";
 # connect to db
 client = MongoClient('localhost', 27017);
+
 db = client.sims_test_db;
 collection = db.sims_new;
 item_count = 0;
