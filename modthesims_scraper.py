@@ -8,6 +8,8 @@ import sys, traceback
 import logging
 import os.path
 
+from keyword_generation import generate_ngram_keywords_from_desc;
+
 BASE_URL = "http://modthesims.info/";
 BASE_URL_BEFORE = "/browse.php?f=414&";
 BASE_URL_END = "&showType=1&gs=4";
@@ -19,7 +21,7 @@ client = MongoClient('localhost',
                       authMechanism='SCRAM-SHA-1');
 
 db = client.sims_test_db;
-collection = db.sims_new;
+collection = db.sims_new1;
 item_count = 0;
 
 
@@ -88,6 +90,7 @@ def insertAndUpdate(item):
           { 
             "$addToSet": { "time_series_data" : dif_data },
             "$set" : {
+              "keywords": item['keywords'],
               "views": item['views'],
               "downloads": item['downloads'],
               "thanks": item['thanks'],
@@ -121,6 +124,7 @@ def insertAndUpdate(item):
 #   types: string array
 #   time_serties_data: object array
 #   game_version: string
+#   keywords: dict
 # }
 
 def parse_item_page(item_url):
@@ -137,7 +141,7 @@ def parse_item_page(item_url):
     game_version = "";
     date_object = None;
     comments = [];
-
+    keywords = {};
 
     artist = "";
     artist_link = "";
@@ -295,6 +299,10 @@ def parse_item_page(item_url):
       logging.exception('File info not FOUND');
       pass;
 
+
+    # generate keywords based on description
+    keywords = generate_ngram_keywords_from_desc(description);
+
     item = {
       'title': title,
       'artist': artist,
@@ -311,6 +319,7 @@ def parse_item_page(item_url):
       'downloads': downloads,
       'comments': comments,
       'description': description,
+      'keywords': keywords,
       'url': url,
       'tags': tags,
       'types': types,
