@@ -86,6 +86,7 @@ def insertAndUpdate(item):
           { 
             "$addToSet": { "time_series_data" : dif_data },
             "$set" : {
+              "keywords": item['keywords'],
               "views": item['views'],
               "downloads": item['downloads'],
               "thanks": item['thanks'],
