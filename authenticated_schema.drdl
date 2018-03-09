@@ -1,0 +1,198 @@
+schema:
+- db: sims_test_db
+  tables:
+  - table: sims_new
+    collection: sims_new
+    pipeline: []
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: artist
+      MongoType: string
+      SqlName: artist
+      SqlType: varchar
+    - Name: artist_url
+      MongoType: string
+      SqlName: artist_url
+      SqlType: varchar
+    - Name: category
+      MongoType: string
+      SqlName: category
+      SqlType: varchar
+    - Name: comments_cnt
+      MongoType: int
+      SqlName: comments_cnt
+      SqlType: int
+    - Name: description
+      MongoType: string
+      SqlName: description
+      SqlType: varchar
+    - Name: downloads
+      MongoType: int
+      SqlName: downloads
+      SqlType: int
+    - Name: favourited
+      MongoType: int
+      SqlName: favourited
+      SqlType: int
+    - Name: game_version
+      MongoType: string
+      SqlName: game_version
+      SqlType: varchar
+    - Name: preview_image
+      MongoType: string
+      SqlName: preview_image
+      SqlType: varchar
+    - Name: publish_date
+      MongoType: date
+      SqlName: publish_date
+      SqlType: timestamp
+    - Name: thanks
+      MongoType: int
+      SqlName: thanks
+      SqlType: int
+    - Name: title
+      MongoType: string
+      SqlName: title
+      SqlType: varchar
+    - Name: url
+      MongoType: string
+      SqlName: url
+      SqlType: varchar
+    - Name: views
+      MongoType: int
+      SqlName: views
+      SqlType: int
+  - table: sims_new_comments
+    collection: sims_new
+    pipeline: []
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+  - table: sims_new_files
+    collection: sims_new
+    pipeline:
+    - $unwind:
+        includeArrayIndex: files_idx
+        path: $files
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: files.date
+      MongoType: date
+      SqlName: files.date
+      SqlType: timestamp
+    - Name: files.downloads
+      MongoType: int
+      SqlName: files.downloads
+      SqlType: int
+    - Name: files.name
+      MongoType: string
+      SqlName: files.name
+      SqlType: varchar
+    - Name: files.size
+      MongoType: string
+      SqlName: files.size
+      SqlType: varchar
+    - Name: files_idx
+      MongoType: int
+      SqlName: files_idx
+      SqlType: int
+  - table: sims_new_pack_requirement
+    collection: sims_new
+    pipeline:
+    - $unwind:
+        includeArrayIndex: pack_requirement_idx
+        path: $pack_requirement
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: pack_requirement
+      MongoType: string
+      SqlName: pack_requirement
+      SqlType: varchar
+    - Name: pack_requirement_idx
+      MongoType: int
+      SqlName: pack_requirement_idx
+      SqlType: int
+  - table: sims_new_tags
+    collection: sims_new
+    pipeline:
+    - $unwind:
+        includeArrayIndex: tags_idx
+        path: $tags
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: tags
+      MongoType: string
+      SqlName: tags
+      SqlType: varchar
+    - Name: tags_idx
+      MongoType: int
+      SqlName: tags_idx
+      SqlType: int
+  - table: sims_new_time_series_data
+    collection: sims_new
+    pipeline:
+    - $unwind:
+        includeArrayIndex: time_series_data_idx
+        path: $time_series_data
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: time_series_data.date
+      MongoType: string
+      SqlName: time_series_data.date
+      SqlType: varchar
+    - Name: time_series_data.downloads
+      MongoType: int
+      SqlName: time_series_data.downloads
+      SqlType: int
+    - Name: time_series_data.favourited
+      MongoType: int
+      SqlName: time_series_data.favourited
+      SqlType: int
+    - Name: time_series_data.thanks
+      MongoType: int
+      SqlName: time_series_data.thanks
+      SqlType: int
+    - Name: time_series_data.views
+      MongoType: int
+      SqlName: time_series_data.views
+      SqlType: int
+    - Name: time_series_data_idx
+      MongoType: int
+      SqlName: time_series_data_idx
+      SqlType: int
+  - table: sims_new_types
+    collection: sims_new
+    pipeline:
+    - $unwind:
+        includeArrayIndex: types_idx
+        path: $types
+    columns:
+    - Name: _id
+      MongoType: bson.ObjectId
+      SqlName: _id
+      SqlType: varchar
+    - Name: types
+      MongoType: string
+      SqlName: types
+      SqlType: varchar
+    - Name: types_idx
+      MongoType: int
+      SqlName: types_idx
+      SqlType: int

@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 def job():
   print('Running daily job...');
+  print('Starting at: %s' % str(datetime.now()));
   modthesims_scraper.start_scraping();
 
 if __name__ == "__main__":

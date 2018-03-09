@@ -1,0 +1,37 @@
+Starting...
+Running daily job...
+Running daily job...
+Running daily job...
+Running daily job...
+Running daily job...
+Running daily job...
+Traceback (most recent call last):
+  File "daily_job_runner.py", line 15, in <module>
+    time.sleep(600);
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/schedule/__init__.py", line 493, in run_pending
+    default_scheduler.run_pending()
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/schedule/__init__.py", line 78, in run_pending
+    self._run_job(job)
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/schedule/__init__.py", line 131, in _run_job
+    ret = job.run()
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/schedule/__init__.py", line 411, in run
+    ret = self.job_func()
+  File "daily_job_runner.py", line 7, in job
+    print('Running daily job...');
+  File "/home/guanbeiqi/sims-mod-web-scraper/modthesims_scraper.py", line 342, in start_scraping
+    # need to generate page urls for each category
+  File "/home/guanbeiqi/sims-mod-web-scraper/modthesims_scraper.py", line 312, in parse_item_page
+    'comments': comments,
+  File "/home/guanbeiqi/sims-mod-web-scraper/modthesims_scraper.py", line 57, in insertAndUpdate
+    
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/pymongo/collection.py", line 1224, in find_one
+    for result in cursor.limit(-1):
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/pymongo/cursor.py", line 1176, in next
+    if len(self.__data) or self._refresh():
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/pymongo/cursor.py", line 1087, in _refresh
+    self.__send_message(q)
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/pymongo/cursor.py", line 974, in __send_message
+    helpers._check_command_response(first)
+  File "/home/guanbeiqi/.local/lib/python3.5/site-packages/pymongo/helpers.py", line 146, in _check_command_response
+    raise OperationFailure(msg % errmsg, code, response)
+pymongo.errors.OperationFailure: not authorized on sims_test_db to execute command { find: "sims_new", filter: { title: "Rebellious Trait" }, limit: 1, singleBatch: true, $readPreference: { mode: "secondaryPreferred" }, $db: "sims_test_db" }
