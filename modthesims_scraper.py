@@ -17,7 +17,7 @@ BASE_URL_END = "&showType=1&gs=4";
 client = MongoClient('localhost', 27017);
 
 db = client.sims_test_db;
-collection = db.sims_new1;
+collection = db.sims_new;
 item_count = 0;
 
 
@@ -54,8 +54,9 @@ def parse_items_in_page(page_url):
     items = soup.find_all('div', class_="downloadblock column");
 
     for item in items:
-      item_url = BASE_URL + item.a['href'];
-      items_urls.append(item_url);
+      if item is not None and item.find('a') is not None:
+        item_url = BASE_URL + item.find('a').get('href');
+        items_urls.append(item_url);
 
     return items_urls;
 
@@ -92,8 +93,7 @@ def insertAndUpdate(item):
               "thanks": item['thanks'],
               "favourited": item['favourited']
             }
-          }, 
-          upsert=True);
+          });
 
       else:
         # simply insert the record
@@ -365,7 +365,7 @@ def start_scraping():
           parse_item_page(item);
         
         #### remove this for production!!!
-        break;
+        # break;
 
     logging.debug("************ SUMMARY ************");
 
