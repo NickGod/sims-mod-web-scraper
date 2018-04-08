@@ -96,8 +96,7 @@ def insertAndUpdate(item):
               "thanks": item['thanks'],
               "favourited": item['favourited']
             }
-          }, 
-          upsert=True);
+          });
 
       else:
         # simply insert the record
