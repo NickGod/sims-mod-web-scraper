@@ -58,8 +58,9 @@ def parse_items_in_page(page_url):
     items = soup.find_all('div', class_="downloadblock column");
 
     for item in items:
-      item_url = BASE_URL + item.a['href'];
-      items_urls.append(item_url);
+      if item is not None and item.find('a') is not None:
+        item_url = BASE_URL + item.find('a').get('href');
+        items_urls.append(item_url);
 
     return items_urls;
 

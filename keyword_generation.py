@@ -30,8 +30,14 @@ def generate_ngram_keywords(keywords):
   # one gram
   for i in range(0, len(keywords)):
 
-    if (len(keywords[i]) < 2):
+    if (len(keywords[i]) <= 2):
       continue;
+
+    # ignore one gram if its two gram is in stop words
+    if (i < len(keywords)-1):
+      two_gram_test = keywords[i] + ' ' + keywords[i+1];
+      if two_gram_test in stop_words:
+        continue;
 
     if (keywords[i] in ngram_words and keywords[i] not in stop_words):
       ngram_words[keywords[i]] += 1;
@@ -40,12 +46,16 @@ def generate_ngram_keywords(keywords):
 
   # two gram
   for i in range(0, len(keywords)-1):
-    if (len(keywords[i]) < 2 and len(keywords[i+1]) < 2):
+    if (len(keywords[i]) <= 2 or len(keywords[i+1]) <= 2):
       continue;
 
-    if (keywords[i] in stop_words and keywords[i+1] in stop_words):
+    if (keywords[i] in stop_words or keywords[i+1] in stop_words):
       continue;
     two_gram_word = keywords[i] + ' ' + keywords[i+1];
+
+    if (two_gram_word in stop_words):
+      continue;
+
     if (two_gram_word in ngram_words):
       ngram_words[two_gram_word] += 1;
     else:
@@ -54,12 +64,16 @@ def generate_ngram_keywords(keywords):
 
   # three gram
   for i in range(0, len(keywords)-2):
-    if (len(keywords[i]) < 2 and len(keywords[i+1]) < 2 and len(keywords[i+2]) < 2):
+    if (len(keywords[i]) <= 2 or len(keywords[i+1]) <= 2 or len(keywords[i+2]) <= 2):
       continue;
 
-    if (keywords[i] in stop_words and keywords[i+1] in stop_words and keywords[i+2] in stop_words):
+    if (keywords[i] in stop_words or keywords[i+1] in stop_words or keywords[i+2] in stop_words):
       continue;
     three_gram_word = keywords[i] + ' ' + keywords[i+1] + ' ' +keywords[i+2];
+
+    if (three_gram_word in stop_words):
+      continue;
+
     if (three_gram_word in ngram_words):
       ngram_words[three_gram_word] += 1;
     else:
@@ -71,7 +85,6 @@ def generate_ngram_keywords(keywords):
       final_ngrams[key] = value;
 
   final_ngrams = OrderedDict(sorted(final_ngrams.items(), key=lambda x : x[1], reverse=True));
-  
   return final_ngrams; 
 
 def generate_ngram_keywords_from_desc(desc):
