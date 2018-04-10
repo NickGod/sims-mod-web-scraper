@@ -16,12 +16,12 @@ BASE_URL_END = "&showType=1&gs=4";
 # connect to db
 client = MongoClient('localhost', 
                       username='sims_dev',
-                      password='dreaperdatavisualization',
+                      password='youcannothackdreaper',
                       authSource='sims_test_db',
                       authMechanism='SCRAM-SHA-1');
 
 db = client.sims_test_db;
-collection = db.sims_new1;
+collection = db.sims_new;
 item_count = 0;
 
 
