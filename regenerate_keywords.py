@@ -4,7 +4,11 @@ from pymongo import MongoClient
 from keyword_generation import generate_ngram_keywords_from_desc;
 
 # connect to db
-client = MongoClient('localhost', 27017);
+client = MongoClient('localhost',
+                      username='sims_dev',
+                      password='youcannothackdreaper',
+                      authSource='sims_test_db',
+                      authMechanism='SCRAM-SHA-1');
 
 db = client.sims_test_db;
 collection = db.sims_new;
