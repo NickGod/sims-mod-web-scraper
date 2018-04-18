@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-from keyword_generation import generate_ngram_keywords_from_desc;
+from keyword_generation import generate_ngram_keywords_for_doc;
 
 # connect to db
 client = MongoClient('localhost', 27017);
