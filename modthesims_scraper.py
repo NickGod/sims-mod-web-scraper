@@ -77,7 +77,7 @@ def insertAndUpdate(item):
           'views': views_dif,
           'downloads': downloads_dif,
           'favourited': fav_dif,
-          'thanks': thanks_dif
+          'thanks': thanks_dif,
         };
 
         # perform update with new daily data;
@@ -88,6 +88,7 @@ def insertAndUpdate(item):
             "$addToSet": { "time_series_data" : dif_data },
             "$set" : {
               "keywords": item['keywords'],
+              "description": item['description'],
               "views": item['views'],
               "downloads": item['downloads'],
               "thanks": item['thanks'],
@@ -257,7 +258,7 @@ def parse_item_page(item_url):
       pass;
 
     try:
-      description = soup.find('div', class_= "downloadDescription").text.strip();
+      description = soup.find('div', id="downloadDescription").text.strip();
     except:
       logging.exception('description not FOUND');
       pass;

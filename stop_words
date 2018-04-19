@@ -53,6 +53,7 @@ beyond
 bill
 both
 bottom
+bug
 but
 by
 call
@@ -378,6 +379,7 @@ zip
 download
 downloading
 package
+pack
 sim
 sims
 files
@@ -464,6 +466,7 @@ interactions
 level
 added
 help
+compatible
 compatibility
 available
 add
@@ -500,9 +503,11 @@ option
 additional
 high
 works
+work
 basic
 remove
 versions
+fix
 fixed
 higher
 note
@@ -568,7 +573,7 @@ really
 active
 rate
 removed
-“takes”
+takes
 test
 days
 feel
@@ -768,8 +773,10 @@ removes
 self
 thing
 unlock
+unlocked
 various
 actually
+advanced
 adventure
 ages
 aug
@@ -780,8 +787,8 @@ depending
 far
 fine
 min
-“med”
-“lod”
+med
+lod
 probably
 quality
 realistic
@@ -790,7 +797,7 @@ tell
 velocitygrass
 ver
 vertices
-“polygons”
+polygons
 yesterday
 aka
 appears
@@ -800,7 +807,7 @@ dark
 edited
 green
 inlinetable
-“tablesorter”
+tablesorter
 order
 pbox
 slightly
@@ -810,7 +817,6 @@ taking
 automatically
 czech
 fee
-flat fee
 includes
 listed
 looking
@@ -826,7 +832,7 @@ section
 select
 separate
 showthread
-“php”
+php
 apple
 big
 completely
@@ -838,11 +844,10 @@ folders
 fully
 got
 later
-light fix
 maybe
 mccc
 named
-“maxis”
+maxis
 reset
 sink
 snack
@@ -862,6 +867,7 @@ directoryfiles
 errors
 finally
 functional
+functionality
 general
 given
 great
@@ -883,7 +889,7 @@ targeted
 true
 tumblr
 unpackedmod
-“autoupdate”
+autoupdate
 uploaded
 wait
 wanted
@@ -901,6 +907,7 @@ height
 option
 important
 lose
+menu
 menus
 modified
 multi
