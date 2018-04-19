@@ -11,7 +11,7 @@ client = MongoClient('localhost',
                       authMechanism='SCRAM-SHA-1');
 
 db = client.sims_test_db;
-collection = db.sims_new;
+collection = db.sims_records_test;
 item_count = 0;
 
 
