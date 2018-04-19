@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-from keyword_generation import generate_ngram_keywords_from_desc;
+from keyword_generation import generate_ngram_keywords_for_doc;
 
 # connect to db
 client = MongoClient('localhost',
@@ -17,7 +17,9 @@ item_count = 0;
 
 def regenerate_keyword_for_doc(document):
   if ('description' in document):
-    document['keywords'] = generate_ngram_keywords_from_desc(document['description']);
+    new_keywords = generate_ngram_keywords_for_doc(document);
+    document['keywords'] = new_keywords;
+
     collection.update_one({'_id': document['_id']}, {"$set": document}, upsert=True);
 
 

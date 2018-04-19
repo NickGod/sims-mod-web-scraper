@@ -8,7 +8,7 @@ import sys, traceback
 import logging
 import os.path
 
-from keyword_generation import generate_ngram_keywords_from_desc;
+from keyword_generation import generate_ngram_keywords_for_doc;
 
 BASE_URL = "http://modthesims.info/";
 BASE_URL_BEFORE = "/browse.php?f=414&";
@@ -301,7 +301,14 @@ def parse_item_page(item_url):
 
 
     # generate keywords based on description
-    keywords = generate_ngram_keywords_from_desc(description);
+    doc = {
+      'title': title,
+      'description': description,
+      'types': types,
+      'tags': tags
+    }
+
+    keywords = generate_ngram_keywords_for_doc(doc);
 
     item = {
       'title': title,
