@@ -89,7 +89,7 @@ def insertAndUpdate(item):
         no_date_record = collection.find_one({"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}});
 
         if no_date_record is not None:
-          collection.update_one(
+          collection.update(
             {"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}}, 
             { 
               "$addToSet": { "time_series_data" : dif_data },
@@ -104,7 +104,7 @@ def insertAndUpdate(item):
             }, multi=True);
         else:
           # perform other update
-          collection.update_one(
+          collection.update(
             {"title": item['title']}, 
             { 
               "$set" : {
