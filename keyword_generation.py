@@ -6,19 +6,27 @@ stop_words = set();
 
 def split_desc_to_words(desc):
   res = "";
-  res = re.sub(r"(([^a-zA-Z])+(')([^a-zA-Z])+|([^a-zA-Z])+(')|(')([^a-zA-Z])+|[^a-zA-Z']+)", " ", desc);
-  res = re.sub(r"\\s+", " ", res);
-  res = re.sub(r"(^(\\s+)|(\\s+)$)", "", res);
-  res = res.lower();
+
+  try:
+    res = re.sub(r"(([^a-zA-Z])+(')([^a-zA-Z])+|([^a-zA-Z])+(')|(')([^a-zA-Z])+|[^a-zA-Z']+)", " ", desc);
+    res = re.sub(r"\\s+", " ", res);
+    res = re.sub(r"(^(\\s+)|(\\s+)$)", "", res);
+    res = res.lower();
+  except:
+    pass;
 
   return res.split(" ");
 
 def clean_word(word):
   res = "";
-  res = re.sub(r"(([^a-zA-Z])+(')([^a-zA-Z])+|([^a-zA-Z])+(')|(')([^a-zA-Z])+|[^a-zA-Z']+)", " ", word);
-  res = re.sub(r"\\s+", " ", res);
-  res = re.sub(r"(^(\\s+)|(\\s+)$)", "", res);
-  res = res.lower().strip();
+
+  try:
+    res = re.sub(r"(([^a-zA-Z])+(')([^a-zA-Z])+|([^a-zA-Z])+(')|(')([^a-zA-Z])+|[^a-zA-Z']+)", " ", word);
+    res = re.sub(r"\\s+", " ", res);
+    res = re.sub(r"(^(\\s+)|(\\s+)$)", "", res);
+    res = res.lower().strip();
+  except:
+    pass;
 
 
   return res.split(" ");
