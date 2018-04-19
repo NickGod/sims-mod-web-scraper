@@ -86,19 +86,36 @@ def insertAndUpdate(item):
 
         # perform update with new daily data;
         # do not update if a record already exists
-        collection.update_one(
-          {"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}}, 
-          { 
-            "$addToSet": { "time_series_data" : dif_data },
-            "$set" : {
-              "keywords": item['keywords'],
-              "description": item['description'],
-              "views": item['views'],
-              "downloads": item['downloads'],
-              "thanks": item['thanks'],
-              "favourited": item['favourited']
-            }
-          });
+        no_date_record = collection.find_one({"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}});
+
+        if no_date_record is not None:
+          collection.update_one(
+            {"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}}, 
+            { 
+              "$addToSet": { "time_series_data" : dif_data },
+              "$set" : {
+                "keywords": item['keywords'],
+                "description": item['description'],
+                "views": item['views'],
+                "downloads": item['downloads'],
+                "thanks": item['thanks'],
+                "favourited": item['favourited']
+              }
+            }, multi=True);
+        else:
+          # perform other update
+          collection.update_one(
+            {"title": item['title']}, 
+            { 
+              "$set" : {
+                "keywords": item['keywords'],
+                "description": item['description'],
+                "views": item['views'],
+                "downloads": item['downloads'],
+                "thanks": item['thanks'],
+                "favourited": item['favourited']
+              }
+            }, multi=True);
 
       else:
         # simply insert the record
