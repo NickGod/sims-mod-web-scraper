@@ -261,7 +261,7 @@ def parse_item_page(item_url):
       pass;
 
     try:
-      description = soup.find('div', class_= "downloadDescription").text.strip();
+      description = soup.find('div', id= "downloadDescription").text.strip();
     except:
       logging.exception('description not FOUND');
       pass;
