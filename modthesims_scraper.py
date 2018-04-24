@@ -377,7 +377,8 @@ def start_scraping():
     urls = ["http://modthesims.info/browse.php?f=637&showType=1&gs=4",
             "http://modthesims.info/browse.php?f=638&showType=1&gs=4",
             "http://modthesims.info/browse.php?f=639&showType=1&gs=4",
-            "http://modthesims.info/browse.php?f=427&showType=1&gs=4"]
+            "http://modthesims.info/browse.php?f=427&showType=1&gs=4",
+            "http://modthesims.info/browse.php?f=747&showType=1&gs=4"]
 
     for url in urls:
       page_urls += prepare_pages_urls(url);
