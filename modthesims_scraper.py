@@ -85,7 +85,7 @@ def insertAndUpdate(item):
         no_date_record = collection.find_one({"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}});
 
         if no_date_record is not None:
-          collection.update_one(
+          collection.update(
             {"title": item['title'], 'time_series_data.date': {'$ne': dif_data['date']}}, 
             { 
               "$addToSet": { "time_series_data" : dif_data },
@@ -100,7 +100,7 @@ def insertAndUpdate(item):
             }, multi=True);
         else:
           # perform other update
-          collection.update_one(
+          collection.update(
             {"title": item['title']}, 
             { 
               "$set" : {
@@ -373,7 +373,8 @@ def start_scraping():
     urls = ["http://modthesims.info/browse.php?f=637&showType=1&gs=4",
             "http://modthesims.info/browse.php?f=638&showType=1&gs=4",
             "http://modthesims.info/browse.php?f=639&showType=1&gs=4",
-            "http://modthesims.info/browse.php?f=427&showType=1&gs=4"]
+            "http://modthesims.info/browse.php?f=427&showType=1&gs=4",
+            "http://modthesims.info/browse.php?f=747&showType=1&gs=4"]
 
     for url in urls:
       page_urls += prepare_pages_urls(url);
