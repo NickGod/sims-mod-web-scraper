@@ -63,7 +63,13 @@ def generate_ngram_keywords(keywords, mult, final_ngrams):
     if (keywords[i] in ngram_words):
       ngram_words[keywords[i]] += mult;
     else:
-      ngram_words[keywords[i]] = mult;
+      if keywords[i].rstrip('s') in ngram_words:
+        ngram_words[keywords[i].rstrip('s')] += mult;
+      elif keywords[i].rstrip('es') in ngram_words:
+        ngram_words[keywords[i].rstrip('es')] += mult;
+      else:
+        ngram_words[keywords[i]] = mult;
+
 
   # two gram
   for i in range(0, len(keywords)-1):
@@ -144,6 +150,9 @@ def generate_ngram_keywords_from_word_array(types, final_ngrams):
     build_stop_words_set();
 
   words = [];
+  if types is None:
+    return;
+  
   for t in types:
     words = words + clean_word(t);
 
