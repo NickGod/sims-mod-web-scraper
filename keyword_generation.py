@@ -63,12 +63,7 @@ def generate_ngram_keywords(keywords, mult, final_ngrams):
     if (keywords[i] in ngram_words):
       ngram_words[keywords[i]] += mult;
     else:
-      if keywords[i].rstrip('s') in ngram_words:
-        ngram_words[keywords[i].rstrip('s')] += mult;
-      elif keywords[i].rstrip('es') in ngram_words:
-        ngram_words[keywords[i].rstrip('es')] += mult;
-      else:
-        ngram_words[keywords[i]] = mult;
+      ngram_words[keywords[i]] = mult;
 
 
   # two gram
@@ -122,6 +117,18 @@ def generate_ngram_keywords_for_doc(doc):
   generate_ngram_keywords_from_title(doc['title'], final_ngrams);
   generate_ngram_keywords_from_word_array(doc['tags'], final_ngrams);
   generate_ngram_keywords_from_word_array(doc['types'], final_ngrams);
+
+  for key in final_ngrams:
+    plural_1 = key + 's';
+    plural_2 = key + 'es';
+    if plural_1 in final_ngrams:
+      final_ngrams[key] += final_ngrams[plural_1]
+      final_ngrams.pop(key, None);
+
+    if plural_2 in final_ngrams:
+      final_ngrams[key] += final_ngrams[plural_2]
+      final_ngrams.pop(key, None);
+
 
   f_ngrams = OrderedDict(sorted(final_ngrams.items(), key=lambda x : x[1], reverse=True));
 
