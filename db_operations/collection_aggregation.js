@@ -3,15 +3,18 @@ var MongoClient = require('mongodb').MongoClient;
 const user_name = 'sims_dev';
 const password = 'youcannothackdeaper';
 
-
 // Connect to the db
-MongoClient.connect("mongodb://localhost:27017/sims_test_db", function(err, db) {
+MongoClient.connect("mongodb://sims_dev:youcannothackdreaper@localhost:27017/sims_test_db", function(err, client) {
   if(!err) {
     console.log("We are connected");
+  } else {
+    console.log(err)
   }
-  db.authenticate(user_name, password, function(err, result) {
-    // perform artis mapred
-    db.sims_new.aggregate([{
+
+  const db = client.db('sims_test_db');
+
+  // perform keywords mapred
+  db.collection('sims_new').aggregate([{
             $group: {
                     _id: "$url",
                     'title': { $first: '$title' },
@@ -45,6 +48,6 @@ MongoClient.connect("mongodb://localhost:27017/sims_test_db", function(err, db) 
                       }
                     }
             }}, {$out : "sims_records_test1"}]);
-    console.log("records aggregated");
-  })
+  console.log("records aggregated");
+  client.close();
 });

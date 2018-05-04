@@ -71,17 +71,21 @@ var reduceFunction1 = function(key, values) {
 
 
 // Connect to the db
-MongoClient.connect("mongodb://localhost:27017/sims_test_db", function(err, db) {
+MongoClient.connect("mongodb://sims_dev:youcannothackdreaper@localhost:27017/sims_test_db", function(err, client) {
   if(!err) {
     console.log("We are connected");
+  } else {
+    console.log(err)
   }
-  db.authenticate(user_name, password, function(err, result) {
-    // perform artis mapred
-    db.sims_records_test.mapReduce(
-                         mapFunction1,
-                         reduceFunction1,
-                         { out: "artists"}
-                       );
-    console.log("artists collection generated");
-  })
+
+  const db = client.db('sims_test_db');
+
+  // perform keywords mapred
+  db.collection('sims_records_test').mapReduce(
+                       mapFunction1,
+                       reduceFunction1,
+                       { out: "artists"}
+                     );
+  client.close();
+  console.log("keyword collection generated");
 });
