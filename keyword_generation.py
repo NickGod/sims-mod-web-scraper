@@ -17,7 +17,7 @@ def split_desc_to_words(desc):
   except:
     pass;
 
-  return res.split(" ");
+  return list(map(lambda x: wnl.lemmatize(x), res.split(" ")));
 
 def clean_word(word):
   res = "";
@@ -26,12 +26,12 @@ def clean_word(word):
     res = re.sub(r"(([^a-zA-Z])+(')([^a-zA-Z])+|([^a-zA-Z])+(')|(')([^a-zA-Z])+|[^a-zA-Z']+)", " ", word);
     res = re.sub(r"\\s+", " ", res);
     res = re.sub(r"(^(\\s+)|(\\s+)$)", "", res);
-    res = wnl.lemmatize(res.lower().strip());
+    res = res.lower().strip();
   except:
     pass;
 
 
-  return res.split(" ");
+  return list(map(lambda x: wnl.lemmatize(x), res.split(" ")));
 
 # read from in put and build a set of stopwords
 def build_stop_words_set():
