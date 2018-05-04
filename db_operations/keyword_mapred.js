@@ -1,5 +1,5 @@
 // Retrieve
-db.auth('sims_dev', 'youcannothackdreaper');
+// db.auth('sims_dev', 'youcannothackdreaper');
 
 // emit keyword and its count
 var mapFunction1 = function() {

@@ -4,8 +4,10 @@ Project for CMU-ETC-SV 18S
 ## Getting Started with Scraper
 
 ### Prerequisites
-  python3 and dependency packages.
-  run `chmod 755 install_dep.sh && ./install_dep.sh` to install dependency
+  python3 and dependency packages
+  run `chmod 755 install_dep.sh && ./install_dep.sh` to install dependency for the scraper.
+
+  To be able to run scraper successfully, you need to have a mongodb instance running on host 27017.
 
 ### Directory and Files
   - `daily_job_runner.py`
@@ -34,35 +36,11 @@ Project for CMU-ETC-SV 18S
       - `db_op.sh`
         shellscript that runs above three scripts with mongoshell
 
+### How to run the whole tool?
 
-### Frontend Directory and Files
-  - `./SimsReact`
-    Frontend app folder
-    - `/package.json`
-      records npm dependency package info
-    - `/webpack.config.js`
-      configuration file for the webpack server
-    - `/js/components/`
-      this folder stores components used across different pages
-    - `/js/pages/`
-      this folder stores code to render the dashboard
-    - `/styles/`
-      stores css style
+Note that the scraper assumes a mongodb instance runs on the same host. To run the scraper once, simply run `python3 modthesims_scraper.py`.
 
-### How to update pack release info?
-  Pack release info is hardcoded in frontend. Specifically, you want to look at `./SimsReact/components/LineChartWithTimeRange.js`. If there is any pack release info you would like to change, please modify the records stored object labelInfoDay and labelFormatMonth.
+To run the scraper daily, you can use a tool called pm2. pm2 can be obtained via command `npm install -g pm2`. You can use pm2 to run `daily_job_runner.py` as a background process. To be able to do this, simply run `pm2 start python3 daily_job_runner.py`.
 
+Normally, you will not need to use `regenerate_keywords.py`, but if you do, simply run `python3 regenerate_keywords.py`, which will repopulate keywords for each mod in the designated collection.
 
-## Getting Started with Backend
-run ```npm install``` to install dependencies, and then run ```node index.js``` in ```dbServer```, node express server will be running at ```localhost:3000```
-
-### Backend Directory and Files
-  - `./dbServer`
-    Backend API server folder
-    - `/index.js`
-    backend server code, with RESTful APIs
-    - `/mongoose_db.js`
-    mongoose schema file, used as ORM for MongoDB documents.
-
-### Which database to use?
-  Note that you have the option to use either a remote db or a local db. When connecting to mongodb with mongoose, simply change the url in mongoose_db.js.

@@ -1,0 +1,1 @@
+pip3 install requests pymongo dateutil bs4 schedule nltk
