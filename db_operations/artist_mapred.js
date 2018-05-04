@@ -1,5 +1,5 @@
 // Retrieve
-// db.auth('sims_dev', 'youcannothackdreaper');
+db.auth('sims_dev', 'youcannothackdreaper');
 
 // creator map reduce
 var mapFunction1 = function() {

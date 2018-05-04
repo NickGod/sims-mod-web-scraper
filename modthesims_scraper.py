@@ -97,7 +97,8 @@ def insertAndUpdate(item):
                 "views": item['views'],
                 "downloads": item['downloads'],
                 "thanks": item['thanks'],
-                "favourited": item['favourited']
+                "favourited": item['favourited'],
+                "comments": item['comments']
               }
             }, multi=True);
         else:
@@ -111,7 +112,8 @@ def insertAndUpdate(item):
                 "views": item['views'],
                 "downloads": item['downloads'],
                 "thanks": item['thanks'],
-                "favourited": item['favourited']
+                "favourited": item['favourited'],
+                "comments": item['comments']
               }
             }, multi=True);
 
@@ -327,7 +329,7 @@ def parse_item_page(item_url):
       # need to visit the comment page
       if len(comments_url) == 0:
         pass;
-      
+
       comments_data = requests.get(comments_url).text;
       comments_soup = BeautifulSoup(comments_data, 'html.parser');
 

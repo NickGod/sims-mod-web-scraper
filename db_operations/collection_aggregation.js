@@ -1,4 +1,4 @@
-// db.auth('sims_dev', 'youcannothackdreaper');
+db.auth('sims_dev', 'youcannothackdreaper');
 db.sims_new.aggregate([{
         $group: {
                 _id: "$url",
@@ -15,7 +15,7 @@ db.sims_new.aggregate([{
                 'thanks': { $max: '$thanks' },
                 'favourited': { $max: '$favourited' },
                 'downloads': { $max: '$downloads' },
-                'comments': { $first: '$comments' },
+                'comments': { $addToSet: '$comments' },
                 'description': { $last: '$description' },
                 'keywords': { $max: '$keywords' },
                 'url': { $first: '$url' },
