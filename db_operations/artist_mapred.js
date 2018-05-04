@@ -75,7 +75,7 @@ MongoClient.connect("mongodb://localhost:27017/sims_test_db", function(err, db) 
   if(!err) {
     console.log("We are connected");
   }
-  db.authenticate(user_name, password, function(err, result) {
+  db.auth(user_name, password, function(err, result) {
     // perform artis mapred
     db.sims_records_test.mapReduce(
                          mapFunction1,

@@ -117,8 +117,10 @@ def generate_ngram_keywords_for_doc(doc):
 
   generate_ngram_keywords_from_desc(doc['description'], final_ngrams);
   generate_ngram_keywords_from_title(doc['title'], final_ngrams);
-  generate_ngram_keywords_from_word_array(doc['tags'], final_ngrams);
-  generate_ngram_keywords_from_word_array(doc['types'], final_ngrams);
+  if 'tags' in doc:
+    generate_ngram_keywords_from_word_array(doc['tags'], final_ngrams);
+  if 'types' in doc:
+    generate_ngram_keywords_from_word_array(doc['types'], final_ngrams);
 
   # for key in list(final_ngrams.keys()):
   #   plural_1 = key + 's';
