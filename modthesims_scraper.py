@@ -8,6 +8,8 @@ import sys, traceback
 import logging
 import os.path
 
+import traceback
+
 from keyword_generation import generate_ngram_keywords_for_doc;
 
 BASE_URL = "http://modthesims.info/";
@@ -17,7 +19,7 @@ BASE_URL_END = "&showType=1&gs=4";
 client = MongoClient('localhost', 27017);
 
 db = client.sims_test_db;
-collection = db.sims_new;
+collection = db.sims_new_comments;
 item_count = 0;
 
 
@@ -171,6 +173,7 @@ def parse_item_page(item_url):
     comments_cnt = 0;
 
     files = [];
+    comments = [];
     tags = [];
     types = [];
 
@@ -182,6 +185,11 @@ def parse_item_page(item_url):
     item_nav_bar = soup.find('div', class_='navbitsbreadcrumbs font-large');
     stats_section = soup.find('div', class_='infobox well nopadding noborder');
     files_section = soup.find('div', id='actualtab1').find('table');
+    tabs_section = soup.find('div', class_='downloadDescription').find('ul').find_all('li');
+    comments_url = '';
+
+    if len(tabs_section) >= 5:
+      comments_url = BASE_URL + tabs_section[4].find('a').get('href');
 
     try:
         category = item_nav_bar.find('h3').text.strip();
@@ -314,6 +322,40 @@ def parse_item_page(item_url):
       pass;
 
 
+    # parse comments info, optional
+    try:
+      # need to visit the comment page
+      if len(comments_url) == 0:
+        pass;
+      
+      comments_data = requests.get(comments_url).text;
+      comments_soup = BeautifulSoup(comments_data, 'html.parser');
+
+      comments_section = comments_soup.find('div', id='actualtab3');
+      comment_entries = comments_section.find_all('div', class_="postbit postbit-font");
+
+      # name, size, downloads, date
+      for comment in comment_entries:
+        comment_obj = {};
+        comment_obj['content'] = comment.find('div', class_="postbitmessage").text;
+        comment_obj['author'] = comment.find('div', class_="postbitside").find('div', class_="postbitusername").find('a').text;
+        comment_date = comment.find('div', class_="postbittop").text.strip().replace('\xa0', ' ');
+        date_object = None;
+        if "Today" not in comment_date and "Yesterday" not in comment_date:
+          date_object = parse(published_date);
+        elif "Today" in comment_date:
+          date_object = datetime.today();
+        elif "Yesterday" in comment_date:
+          date_object = datetime.today() - timedelta(days=1);
+        comment_obj['date'] = date_object;
+        comments.append(comment_obj);
+
+    except Exception:
+      logging.exception('comment info not FOUND');
+      pass;
+
+
+
     # generate keywords based on description
     doc = {
       'title': title,
@@ -345,6 +387,7 @@ def parse_item_page(item_url):
       'tags': tags,
       'types': types,
       'files': files,
+      'comments': comments,
       'time_series_data': []
     };
 
@@ -360,7 +403,7 @@ def start_scraping():
 
     # logging utility
     # every time the scraper is run, it will write a new log file
-    logging.basicConfig(filename=log_time+'.log', level=logging.DEBUG);
+    logging.basicConfig(filename=log_time+'.log');
     logging.debug("************ Scraping starts at %s ************" % str(datetime.now()));
 
 

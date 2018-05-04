@@ -1,4 +1,4 @@
-db.auth('sims_dev', 'youcannothackdreaper');
+// db.auth('sims_dev', 'youcannothackdreaper');
 db.sims_new.aggregate([{
         $group: {
                 _id: "$url",
